@@ -118,9 +118,18 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-// Управление игроком с помощью сенсора
+// Управление игроком: Клавиатура
+document.addEventListener("keydown", (e) => {
+  if (e.code === "ArrowLeft" && player.x > 0) {
+    player.x -= 20;
+  } else if (e.code === "ArrowRight" && player.x + player.width < canvas.width) {
+    player.x += 20;
+  }
+});
+
+// Управление игроком: Сенсорное управление
 function handleTouch(event) {
-  const touchX = event.touches[0].clientX; // Получаем координату X касания
+  const touchX = event.touches[0].clientX - canvas.getBoundingClientRect().left;
 
   if (touchX < canvas.width / 2 && player.x > 0) {
     // Если касание слева, двигаем игрока влево
