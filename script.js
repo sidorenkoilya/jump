@@ -14,16 +14,17 @@ let isGameOver = false;
 // Создание платформ
 function createPlatforms() {
   platforms = [];
-  for (let i = 0; i < 6; i++) {
+  const platformCount = 12; // Количество платформ
+  for (let i = 0; i < platformCount; i++) {
     platforms.push({
       x: Math.random() * (canvas.width - 70),
-      y: i * 100,
+      y: i * (canvas.height / platformCount), // Платформы равномерно распределены
       width: 70,
       height: 10,
       visible: true,
     });
   }
-  platforms[0].x = player.x - 25; // Игрок стоит по центру платформы
+  platforms[0].x = player.x - 25; // Стартовая платформа под игроком
   platforms[0].y = player.y + 20;
   platforms[0].visible = true;
 }
@@ -47,7 +48,7 @@ function drawPlatforms() {
 // Обновление платформ
 function updatePlatforms() {
   platforms.forEach((platform) => {
-    platform.y += 2;
+    platform.y += 1.5; // Скорость движения платформ
     if (platform.y > canvas.height) {
       platform.y = -10;
       platform.x = Math.random() * (canvas.width - platform.width);
@@ -67,7 +68,7 @@ function checkCollision() {
       player.y + player.height > platform.y &&
       platform.visible
     ) {
-      player.dy = -10; // Отскок игрока
+      player.dy = -8; // Уменьшенная высота прыжка
       platform.visible = false; // Платформа исчезает
     }
   });
@@ -76,7 +77,7 @@ function checkCollision() {
 // Обновление игрока
 function updatePlayer() {
   player.y += player.dy;
-  player.dy += 0.5; // Гравитация
+  player.dy += 0.3; // Плавная гравитация
 
   if (player.y > canvas.height) {
     isGameOver = true;
