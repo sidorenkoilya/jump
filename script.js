@@ -118,14 +118,22 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-// Управление игроком
-document.addEventListener("keydown", (e) => {
-  if (e.code === "ArrowLeft" && player.x > 0) {
+// Управление игроком с помощью сенсора
+function handleTouch(event) {
+  const touchX = event.touches[0].clientX; // Получаем координату X касания
+
+  if (touchX < canvas.width / 2 && player.x > 0) {
+    // Если касание слева, двигаем игрока влево
     player.x -= 20;
-  } else if (e.code === "ArrowRight" && player.x + player.width < canvas.width) {
+  } else if (touchX > canvas.width / 2 && player.x + player.width < canvas.width) {
+    // Если касание справа, двигаем игрока вправо
     player.x += 20;
   }
-});
+  event.preventDefault(); // Предотвращаем прокрутку
+}
+
+// Добавляем обработчик для сенсора
+canvas.addEventListener("touchstart", handleTouch);
 
 // Функция старта игры
 function startGame() {
