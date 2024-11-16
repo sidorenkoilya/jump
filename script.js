@@ -13,6 +13,7 @@ let isGameOver = false;
 
 // Создание платформ
 function createPlatforms() {
+  platforms = [];
   for (let i = 0; i < 6; i++) {
     platforms.push({
       x: Math.random() * (canvas.width - 70),
@@ -22,6 +23,9 @@ function createPlatforms() {
       visible: true,
     });
   }
+  platforms[0].x = player.x - 25; // Игрок стоит по центру платформы
+  platforms[0].y = player.y + 20;
+  platforms[0].visible = true;
 }
 
 // Рисование игрока
@@ -86,14 +90,17 @@ function drawScore() {
   ctx.fillText(`Score: ${score}`, 10, 20);
 }
 
+// Конец игры
+function endGame() {
+  document.getElementById("gameOverScreen").style.display = "block";
+  document.getElementById("finalScore").textContent = `Ваш результат: ${score}`;
+  canvas.style.display = "none";
+}
+
 // Игровой цикл
 function gameLoop() {
   if (isGameOver) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "red";
-    ctx.fillText("Game Over", canvas.width / 2 - 80, canvas.height / 2);
-    ctx.fillText(`Final Score: ${score}`, canvas.width / 2 - 100, canvas.height / 2 + 40);
+    endGame();
     return;
   }
 
@@ -119,6 +126,39 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// Запуск игры
-createPlatforms();
-gameLoop();
+// Функция старта игры
+function startGame() {
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("gameOverScreen").style.display = "none";
+  canvas.style.display = "block";
+  isGameOver = false;
+  player = { x: 200, y: 500, width: 20, height: 20, dy: 0 };
+  score = 0;
+  createPlatforms();
+  gameLoop();
+}
+
+// Функция для повторного запуска игры
+function retryGame() {
+  startGame();
+}
+
+// Функция для публикации результата
+function shareScore() {
+  const shareText = `Я набрал ${score} очков в игре Shadow Jump! Попробуй побить мой результат!`;
+  if (navigator.share) {
+    navigator.share({
+      title: "Shadow Jump",
+      text: shareText,
+      url: window.location.href,
+    });
+  } else {
+    alert("Ваш результат скопирован: " + shareText);
+    navigator.clipboard.writeText(shareText);
+  }
+}
+
+// Обработчики кнопок
+document.getElementById("startButton").addEventListener("click", startGame);
+document.getElementById("retryButton").addEventListener("click", retryGame);
+document.getElementById("shareButton").addEventListener("click", shareScore);
